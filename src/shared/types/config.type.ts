@@ -9,7 +9,7 @@ export type DatabaseConfig = {
 export type AuthConfig = {
   jwt: {
     secret: string;
-    signOptions: { expiresIn: string };
+    expiresIn: string;
   };
   google: {
     clientId: string;

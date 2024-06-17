@@ -10,6 +10,7 @@ import { PaginationDto } from '../shared/types/pagination.dto';
 import { User } from '@prisma/client';
 import { UserSelect } from './dto/user.response.dto';
 import { ErrorMessages } from '../shared/error-messages';
+import { GoogleProfile } from '../auth/strategy/google.profile.type';
 
 @Injectable()
 export class UserService {
@@ -93,5 +94,44 @@ export class UserService {
       },
       select: UserSelect,
     });
+  }
+
+  async createUserFromGoogle(user: GoogleProfile): Promise<User> {
+    const existingUser = await this.findByEmail(user.emails[0].value);
+
+    const email = user.emails[0].value;
+    const verified = user.emails[0].verified;
+    const displayName = user.displayName;
+    const provider = user.provider;
+
+    if (existingUser) {
+      if (!existingUser.googleId) {
+        await this.prisma.user.update({
+          where: {
+            id: existingUser.id,
+          },
+          data: {
+            googleId: user.id,
+            verified,
+            displayName,
+            provider,
+          },
+        });
+      }
+      return existingUser;
+    }
+
+    const newUser = await this.prisma.user.create({
+      data: {
+        email,
+        googleId: user.id,
+        verified,
+        displayName,
+        provider,
+      },
+      select: UserSelect,
+    });
+
+    return newUser;
   }
 }

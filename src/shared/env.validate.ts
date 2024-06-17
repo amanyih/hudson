@@ -26,6 +26,9 @@ class EnvironmentVariables {
   JWT_SECRET: string;
 
   @IsNotEmpty()
+  JWT_EXPIRES_IN: string;
+
+  @IsNotEmpty()
   GOOGLE_CLIENT_ID: string;
 
   @IsNotEmpty()

@@ -11,6 +11,11 @@ const createUserSelect = (): UserFields => {
     passwordHash: false,
     createdAt: true,
     updatedAt: true,
+    avatar: true,
+    displayName: true,
+    googleId: true,
+    provider: true,
+    verified: true,
   };
   return userFields;
 };

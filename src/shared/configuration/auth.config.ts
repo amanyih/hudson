@@ -6,7 +6,7 @@ export default registerAs(
   (): AuthConfig => ({
     jwt: {
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '90d' },
+      expiresIn: process.env.JWT_EXPIRES_IN,
     },
 
     google: {
