@@ -5,6 +5,7 @@ import { UserModule } from './user/user.module';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseConfig, AuthConfig, EnvConfig } from './shared/configuration';
 import { validate } from './shared/env.validate';
+import { ResultModule } from './result/result.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { validate } from './shared/env.validate';
       load: [DatabaseConfig, AuthConfig, EnvConfig],
       validate,
     }),
+    ResultModule,
   ],
   controllers: [],
   providers: [],

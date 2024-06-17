@@ -12,15 +12,79 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String    @id @default(uuid())
+  email        String    @unique
   passwordHash String?
-  googleId     String?  @unique
+  googleId     String?   @unique
   displayName  String?
   avatar       String?
   provider     String?
-  verified     Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  verified     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  Result       Result[]
+  UserData     UserData?
+  Config       Config?
+  badges       String[] @default([])
+}
+
+model Result {
+  id              String   @id @default(uuid())
+  wpm             Float
+  rawWpm          Float
+  accuracy        Float
+  charactersTotal Int
+  mode            String
+  submode         String
+  punctuation     Boolean
+  numbers         Boolean
+  testLanguage    String
+  keySpacing      Float[]
+  keyDuration     Float[]
+  duration        Float
+  userId          String
+  createdAt       DateTime @default(now())
+
+  User User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model UserData {
+  id             String  @id @default(uuid())
+  personalBest   Float
+  completedTests Int
+  timeSpent      Float
+  xp             Int
+  bio            String?
+  userId         String  @unique
+  isPremium      Boolean @default(false)
+
+  User User @relation(fields: [userId], references: [id])
+}
+
+model Config {
+  id     String @id @default(uuid())
+  theme  String
+  words  String
+  time   Int
+  mode   String
+  userId String @unique
+  User   User   @relation(fields: [userId], references: [id])
+}
+
+model Badge {
+  id String @id @default(uuid())
+  name String
+  description String
+  icon String
+  xp Int
+  type  BadgeType
+}
+
+enum BadgeType {
+  WPM
+  ACCURACY
+  TESTS
+  TIME
 }
