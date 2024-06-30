@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -37,7 +31,7 @@ model Result {
   accuracy        Float
   charactersTotal Int
   mode            String
-  submode         String
+  submode         Int
   punctuation     Boolean
   numbers         Boolean
   testLanguage    String
@@ -52,11 +46,11 @@ model Result {
 
 model UserData {
   id             String  @id @default(uuid())
-  personalBest   Float
-  completedTests Int
-  timeSpent      Float
-  xp             Int
-  bio            String?
+  personalBest   Float @default(0)
+  completedTests Int @default(0)
+  timeSpent      Float @default(0)
+  xp             Int @default(0)
+  bio            String? @default("")
   userId         String  @unique
   isPremium      Boolean @default(false)
 
@@ -65,10 +59,10 @@ model UserData {
 
 model Config {
   id     String @id @default(uuid())
-  theme  String
+  theme  Theme @default(SYSTEM)
   words  String
   time   Int
-  mode   String
+  mode   Mode @default(TIME)
   userId String @unique
   User   User   @relation(fields: [userId], references: [id])
 }
@@ -86,5 +80,16 @@ enum BadgeType {
   WPM
   ACCURACY
   TESTS
+  TIME
+}
+
+enum Theme {
+  LIGHT
+  DARK
+  SYSTEM
+}
+
+enum Mode {
+  WORDS
   TIME
 }

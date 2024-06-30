@@ -16,6 +16,7 @@ const createUserSelect = (): UserFields => {
     googleId: true,
     provider: true,
     verified: true,
+    badges: true,
   };
   return userFields;
 };

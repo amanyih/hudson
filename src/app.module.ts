@@ -6,6 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseConfig, AuthConfig, EnvConfig } from './shared/configuration';
 import { validate } from './shared/env.validate';
 import { ResultModule } from './result/result.module';
+import { UserDataModule } from './user-data/user-data.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ResultModule } from './result/result.module';
       validate,
     }),
     ResultModule,
+    UserDataModule,
   ],
   controllers: [],
   providers: [],

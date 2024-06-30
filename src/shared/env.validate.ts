@@ -44,8 +44,6 @@ export function validate(config: Record<string, unknown>) {
   });
 
   if (errors.length > 0) {
-    console.error('Config validation error: ');
-    console.error(errors.toString());
     throw new Error(errors.toString());
   }
   return validatedConfig;
