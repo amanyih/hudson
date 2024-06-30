@@ -54,7 +54,10 @@ describe('UserController (e2e)', () => {
       password: 'password',
     };
 
-    await request(app.getHttpServer()).post('/api/user').send(createUserDto);
+    await request(app.getHttpServer())
+      .post('/api/user')
+      .send(createUserDto)
+      .expect(201);
 
     return await request(app.getHttpServer())
       .post('/api/user')
@@ -104,7 +107,8 @@ describe('UserController (e2e)', () => {
 
     const { body: user } = await request(app.getHttpServer())
       .post('/api/user')
-      .send(createUserDto);
+      .send(createUserDto)
+      .expect(201);
 
     return await request(app.getHttpServer())
       .get(`/api/user/${user.id}`)

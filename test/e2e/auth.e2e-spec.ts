@@ -88,7 +88,10 @@ describe('AuthController (e2e)', () => {
       ...signUpDto,
     };
 
-    await request(app.getHttpServer()).post('/api/auth/signup').send(signUpDto);
+    await request(app.getHttpServer())
+      .post('/api/auth/signup')
+      .send(signUpDto)
+      .expect(201);
 
     return await request(app.getHttpServer())
       .post('/api/auth/login')
@@ -122,7 +125,10 @@ describe('AuthController (e2e)', () => {
       password: 'incorrect',
     };
 
-    await request(app.getHttpServer()).post('/api/auth/signup').send(signUpDto);
+    await request(app.getHttpServer())
+      .post('/api/auth/signup')
+      .send(signUpDto)
+      .expect(201);
 
     return await request(app.getHttpServer())
       .post('/api/auth/login')
@@ -134,7 +140,7 @@ describe('AuthController (e2e)', () => {
   });
 
   afterAll(async () => {
-    await app.close();
     await prisma.cleanup();
+    await app.close();
   });
 });

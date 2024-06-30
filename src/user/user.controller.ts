@@ -7,7 +7,6 @@ import {
   Param,
   Delete,
   Query,
-  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,9 +14,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from '../shared/types/pagination.dto';
 import { GetUser } from '../auth/decorator/get-user.decorator';
 import { User } from '@prisma/client';
-import { JwtGuard } from '../auth/guard/jwt.guard';
 
-@UseGuards(JwtGuard)
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
