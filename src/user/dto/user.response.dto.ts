@@ -17,6 +17,7 @@ const createUserSelect = (): UserFields => {
     provider: true,
     verified: true,
     badges: true,
+    isPremium: true,
   };
   return userFields;
 };

@@ -11,10 +11,14 @@ import { User } from '@prisma/client';
 import { UserSelect } from './dto/user.response.dto';
 import { ErrorMessages } from '../shared/error-messages';
 import { GoogleProfile } from '../auth/strategy/google.profile.type';
+import { ConfigurationService } from '../configuration/configuration.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configurationService: ConfigurationService,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
     const existingUser = await this.findByEmail(createUserDto.email);
@@ -30,6 +34,8 @@ export class UserService {
       },
       select: UserSelect,
     });
+
+    await this.configurationService.createDefaultConfigForUser(user.id);
 
     return user;
   }
@@ -132,6 +138,7 @@ export class UserService {
       select: UserSelect,
     });
 
+    await this.configurationService.createDefaultConfigForUser(newUser.id);
     return newUser;
   }
 }

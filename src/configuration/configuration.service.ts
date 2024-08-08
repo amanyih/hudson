@@ -70,4 +70,14 @@ export class ConfigurationService {
 
     return true;
   }
+
+  async createDefaultConfigForUser(userId: string): Promise<Config> {
+    const configuration = await this.prisma.config.create({
+      data: {
+        userId,
+      } as unknown as Config,
+    });
+
+    return configuration;
+  }
 }

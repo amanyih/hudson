@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsEnum, Min } from 'class-validator';
-import { BadgeType } from '../../shared/types/types.config';
+import { BADGETYPE } from '../../shared/types/types.config';
 
 export class CreateBadgeDto {
   @IsString()
@@ -15,6 +15,6 @@ export class CreateBadgeDto {
   @Min(0)
   xp: number;
 
-  @IsEnum(BadgeType)
-  type: BadgeType;
+  @IsEnum(BADGETYPE)
+  type: BADGETYPE;
 }

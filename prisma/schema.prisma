@@ -22,7 +22,7 @@ model User {
   UserData     UserData?
   Config       Config?
   badges       String[] @default([])
-  isPremium      Boolean @default(false)
+  isPremium    Boolean @default(false)
 }
 
 model Result {
@@ -59,8 +59,8 @@ model UserData {
 model Config {
   id     String @id @default(uuid())
   theme  Theme @default(SYSTEM)
-  words  Int
-  time   Int
+  words  Int @default(25)
+  time   Int @default(60)
   mode   Mode @default(TIME)
   userId String @unique
   User   User   @relation(fields: [userId], references: [id])
