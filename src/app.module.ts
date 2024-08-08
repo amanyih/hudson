@@ -7,6 +7,8 @@ import { DatabaseConfig, AuthConfig, EnvConfig } from './shared/configuration';
 import { validate } from './shared/env.validate';
 import { ResultModule } from './result/result.module';
 import { UserDataModule } from './user-data/user-data.module';
+import { BadgeModule } from './badge/badge.module';
+import { ConfigurationModule } from './configuration/configuration.module';
 
 @Module({
   imports: [
@@ -20,6 +22,9 @@ import { UserDataModule } from './user-data/user-data.module';
     }),
     ResultModule,
     UserDataModule,
+    BadgeModule,
+    ConfigModule,
+    ConfigurationModule,
   ],
   controllers: [],
   providers: [],

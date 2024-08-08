@@ -13,3 +13,16 @@ export enum SUBMODE {
   SIXTY_SECONDS = 60,
   ONE_TWENTY = 120,
 }
+
+export enum BADGETYPE {
+  WPM = 'WPM',
+  ACCURACY = 'ACCURACY',
+  TESTS = 'TESTS',
+  TIME = 'TIME',
+}
+
+export enum THEME {
+  SYSTEM = 'SYSTEM',
+  LIGHT = 'LIGHT',
+  DARK = 'DARK',
+}
