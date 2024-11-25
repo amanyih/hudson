@@ -23,6 +23,8 @@ model User {
   Config       Config?
   badges       String[] @default([])
   isPremium    Boolean @default(false)
+
+  RaceResult RaceResult[]
 }
 
 model Result {
@@ -73,6 +75,50 @@ model Badge {
   icon String
   xp Int
   type  BadgeType
+}
+
+model Race {
+  id String @id @default(uuid())
+  name String
+  description String?
+  subMode Int 
+  startTime DateTime
+  language String
+  hasNumbers Boolean @default(false)
+  hasPunctuation Boolean @default(false) 
+  isPublic Boolean @default(false)
+  participants String[]
+  invitedUsers String[]
+  chatMessages Message[] @relation("RaceMessages")
+  createdAt DateTime @default(now())
+  startedAt DateTime?
+  isFinished Boolean @default(false)
+
+  RaceResult RaceResult[]
+}
+
+model RaceResult {
+  id String @id @default(uuid())
+  raceId String
+  userId String
+  wordsTyped Int
+  completionTime Int?
+  accuracy Float
+  rank Int
+  isWinner Boolean @default(false)
+
+  race Race @relation(fields: [raceId], references: [id], onDelete: Cascade)
+  participant    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Message {
+  id String @id @default(uuid())
+  content String
+  senderId String
+  raceId String
+  createdAt DateTime @default(now())
+
+  race Race @relation("RaceMessages", fields: [raceId], references: [id])
 }
 
 enum BadgeType {
