@@ -10,6 +10,7 @@ import { JwtToken } from './dto/jwt.token';
 import { ConfigService } from '@nestjs/config';
 import { AuthConfig, Config } from '../shared/types/config.type';
 import { GoogleProfile } from './strategy/google.profile.type';
+import { Response } from 'express';
 
 @Injectable()
 export class AuthService {
@@ -38,7 +39,7 @@ export class AuthService {
     });
   }
 
-  async login(loginDto: LoginDto): Promise<JwtToken> {
+  async login(loginDto: LoginDto, res: Response): Promise<JwtToken> {
     const user = await this.prisma.user.findUnique({
       where: {
         email: loginDto.email,
@@ -61,7 +62,15 @@ export class AuthService {
       );
     }
 
-    return this.signToken(user.email, user.id);
+    const token = await this.signToken(user.email, user.id);
+
+    res.cookie('access_token', token.access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    return token;
   }
 
   async signToken(email: string, id: string): Promise<JwtToken> {

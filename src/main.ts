@@ -3,9 +3,15 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EnvConfig, Config } from './shared/types/config.type';
+import * as cookieParser from 'cookie-parser';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    cors: {
+      origin: ['http://localhost:3000'],
+      credentials: true,
+    },
+  });
   const configService = app.get(ConfigService);
   const port = configService.get<EnvConfig>(Config.ENV).port;
   app.setGlobalPrefix('api');
@@ -19,6 +25,7 @@ async function bootstrap() {
       },
     }),
   );
+  app.use(cookieParser());
   await app.listen(port);
 }
 bootstrap();

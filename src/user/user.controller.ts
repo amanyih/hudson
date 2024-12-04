@@ -29,6 +29,11 @@ export class UserController {
     return this.userService.findAll(paginationDto);
   }
 
+  @Get('me')
+  me(@GetUser() user: User) {
+    return user;
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(id);
@@ -42,10 +47,5 @@ export class UserController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.userService.remove(id);
-  }
-
-  @Get('me')
-  me(@GetUser() user: User) {
-    return user;
   }
 }
