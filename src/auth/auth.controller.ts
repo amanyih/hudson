@@ -13,7 +13,9 @@ import { AuthService } from './auth.service';
 import { LoginDto, SignupDto } from './dto';
 import { GoogleOAuthGuard } from './guard/google.auth.guard';
 import { Response } from 'express';
+import { Public } from './decorator/public.decorator';
 
+@Public()
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

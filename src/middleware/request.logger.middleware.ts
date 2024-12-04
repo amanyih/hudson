@@ -8,7 +8,10 @@ export class RequestLoggerMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     const { method, originalUrl, body } = req;
     const formattedBody = JSON.stringify(body, null, 2);
-    this.logger.log(`\n ${method}: ${originalUrl}, Body: ${formattedBody}`);
+    const date = new Date().toLocaleString();
+    this.logger.log(
+      `\n ${method}: ${originalUrl} - ${date} \n Body: ${formattedBody}`,
+    );
     next();
   }
 }

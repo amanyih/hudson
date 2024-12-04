@@ -59,7 +59,7 @@ export class UserService {
     });
 
     if (!existingUser) {
-      throw new NotFoundException(ErrorMessages.NOT_FOUND);
+      throw new NotFoundException('User not found');
     }
 
     return existingUser;

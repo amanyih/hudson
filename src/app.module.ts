@@ -12,6 +12,9 @@ import { ConfigurationModule } from './configuration/configuration.module';
 import { RaceModule } from './race/race.module';
 import { RaceResultModule } from './race-result/race-result.module';
 import { RequestLoggerMiddleware } from './middleware/request.logger.middleware';
+import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { JwtGuard } from './auth/guard/jwt.guard';
 
 @Module({
   imports: [
@@ -32,7 +35,16 @@ import { RequestLoggerMiddleware } from './middleware/request.logger.middleware'
     RaceResultModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: JwtGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

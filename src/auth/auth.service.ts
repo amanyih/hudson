@@ -1,4 +1,4 @@
-import { HttpException, HttpStatus, Injectable, Req } from '@nestjs/common';
+import { BadRequestException, Injectable, Req } from '@nestjs/common';
 import { LoginDto, SignupDto } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
@@ -25,10 +25,7 @@ export class AuthService {
     const user = await this.userService.findByEmail(signupDto.email);
 
     if (user) {
-      throw new HttpException(
-        ErrorMessages.USER_ALREADY_EXISTS,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ErrorMessages.USER_ALREADY_EXISTS);
     }
 
     const hash = await argon2.hash(signupDto.password);
@@ -47,19 +44,13 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new HttpException(
-        ErrorMessages.INVALID_CREDENTIALS,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ErrorMessages.INVALID_CREDENTIALS);
     }
 
     const valid = await argon2.verify(user.passwordHash, loginDto.password);
 
     if (!valid) {
-      throw new HttpException(
-        ErrorMessages.INVALID_CREDENTIALS,
-        HttpStatus.BAD_REQUEST,
-      );
+      throw new BadRequestException(ErrorMessages.INVALID_CREDENTIALS);
     }
 
     const token = await this.signToken(user.email, user.id);

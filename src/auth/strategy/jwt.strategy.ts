@@ -6,6 +6,7 @@ import { AuthConfig, Config } from '../../shared/types/config.type';
 import { JwtPayload } from './jwt.payload';
 import { UserSelect } from '../../user/dto/user.response.dto';
 import { Injectable } from '@nestjs/common';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -14,7 +15,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private prisma: PrismaService,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        JwtStrategy.extractJwtFromCookie,
+        ExtractJwt.fromAuthHeaderAsBearerToken(),
+      ]),
       ignoreExpiration: false,
       secretOrKey: config.get<AuthConfig>(Config.AUTH).jwt.secret,
     });
@@ -27,5 +31,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       },
       select: UserSelect,
     });
+  }
+
+  private static extractJwtFromCookie(req: Request) {
+    if (!req || !req.cookies || !req.cookies['access_token']) {
+      return null;
+    }
+
+    console.log('extractJwtFromCookie', req.cookies['access_token']);
+
+    return req.cookies['access_token'];
   }
 }
