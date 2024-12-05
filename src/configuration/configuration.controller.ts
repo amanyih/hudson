@@ -12,14 +12,19 @@ import { ConfigurationService } from './configuration.service';
 import { CreateConfigurationDto } from './dto/create-configuration.dto';
 import { UpdateConfigurationDto } from './dto/update-configuration.dto';
 import { PaginationDto } from '../shared/types/pagination.dto';
+import { GetUser } from '../auth/decorator/get-user.decorator';
+import { User } from '@prisma/client';
 
 @Controller('configuration')
 export class ConfigurationController {
   constructor(private readonly configurationService: ConfigurationService) {}
 
   @Post()
-  create(@Body() createConfigurationDto: CreateConfigurationDto) {
-    return this.configurationService.create(createConfigurationDto);
+  create(
+    @Body() createConfigurationDto: CreateConfigurationDto,
+    @GetUser() user: User,
+  ) {
+    return this.configurationService.create(createConfigurationDto, user.id);
   }
 
   @Get()

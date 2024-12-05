@@ -3,8 +3,8 @@ import { IsNumber, IsOptional, Min } from 'class-validator';
 export class PaginationDto {
   @IsNumber()
   @IsOptional()
-  @Min(1)
-  page: number = 1;
+  @Min(0)
+  page: number = 0;
 
   @IsNumber()
   @IsOptional()

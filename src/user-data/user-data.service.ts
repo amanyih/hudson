@@ -8,9 +8,15 @@ import { UserData } from '@prisma/client';
 export class UserDataService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createUserDataDto: CreateUserDataDto): Promise<UserData> {
+  async create(
+    createUserDataDto: CreateUserDataDto,
+    userId: string,
+  ): Promise<UserData> {
     const userData = await this.prisma.userData.create({
-      data: createUserDataDto,
+      data: {
+        ...createUserDataDto,
+        userId,
+      },
     });
     return userData;
   }

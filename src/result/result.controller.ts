@@ -3,23 +3,23 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
 } from '@nestjs/common';
 import { ResultService } from './result.service';
 import { CreateResultDto } from './dto/create-result.dto';
-import { UpdateResultDto } from './dto/update-result.dto';
 import { PaginationDto } from '../shared/types/pagination.dto';
+import { GetUser } from '../auth/decorator/get-user.decorator';
+import { User } from '@prisma/client';
 
 @Controller('result')
 export class ResultController {
   constructor(private readonly resultService: ResultService) {}
 
   @Post()
-  create(@Body() createResultDto: CreateResultDto) {
-    return this.resultService.create(createResultDto);
+  create(@Body() createResultDto: CreateResultDto, @GetUser() user: User) {
+    return this.resultService.create(createResultDto, user.id);
   }
 
   @Get()
@@ -30,11 +30,6 @@ export class ResultController {
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.resultService.findOne(id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateResultDto: UpdateResultDto) {
-    return this.resultService.update(id, updateResultDto);
   }
 
   @Delete(':id')

@@ -15,16 +15,36 @@ export class RaceService {
     private raceResultService: RaceResultService,
   ) {}
 
-  async create(data: CreateRaceDto): Promise<Race> {
-    const race = await this.prisma.race.create({ data });
+  async create(data: CreateRaceDto, userId: string): Promise<Race> {
+    const race = await this.prisma.race.create({
+      data: {
+        ...data,
+        userId,
+      },
+    });
     return race;
   }
 
-  async findAll(pagination: PaginationDto): Promise<Race[]> {
+  async findAll(pagination: PaginationDto, userId: string): Promise<Race[]> {
     const { page, limit } = pagination;
 
     const races = await this.prisma.race.findMany({
-      skip: (page - 1) * limit,
+      where: {
+        OR: [
+          {
+            isPublic: true,
+          },
+          {
+            invitedUsers: {
+              has: userId,
+            },
+          },
+          {
+            userId,
+          },
+        ],
+      },
+      skip: page * limit,
       take: limit,
     });
 
@@ -35,6 +55,22 @@ export class RaceService {
     const race = await this.prisma.race.findUnique({
       where: {
         id,
+      },
+      include: {
+        RaceResult: true,
+        chatMessages: true,
+        User: {
+          select: {
+            id: true,
+            email: true,
+            UserData: {
+              select: {
+                avatar: true,
+                displayName: true,
+              },
+            },
+          },
+        },
       },
     });
 

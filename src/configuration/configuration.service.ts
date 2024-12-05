@@ -11,11 +11,31 @@ export class ConfigurationService {
 
   async create(
     createConfigurationDto: CreateConfigurationDto,
+    userId: string,
   ): Promise<Config> {
-    const configuration = await this.prisma.config.create({
-      data: createConfigurationDto as unknown as Config,
+    const existingConfiguration = await this.prisma.config.findFirst({
+      where: {
+        userId,
+      },
     });
 
+    let configuration: Config;
+
+    if (existingConfiguration) {
+      configuration = await this.prisma.config.update({
+        where: {
+          id: existingConfiguration.id,
+        },
+        data: createConfigurationDto,
+      });
+    } else {
+      configuration = await this.prisma.config.create({
+        data: {
+          ...createConfigurationDto,
+          userId,
+        },
+      });
+    }
     return configuration;
   }
 
@@ -59,23 +79,29 @@ export class ConfigurationService {
     return config;
   }
 
-  async remove(id: string): Promise<boolean> {
-    await this.findOne(id);
+  async remove(id: string): Promise<Config> {
+    const existing = await this.findOne(id);
 
-    await this.prisma.config.delete({
+    const newConfig = new CreateConfigurationDto();
+
+    const config = await this.prisma.config.update({
       where: {
-        id: id,
+        id,
+      },
+      data: {
+        ...newConfig,
+        userId: existing.userId,
       },
     });
 
-    return true;
+    return config;
   }
 
   async createDefaultConfigForUser(userId: string): Promise<Config> {
     const configuration = await this.prisma.config.create({
       data: {
         userId,
-      } as unknown as Config,
+      },
     });
 
     return configuration;

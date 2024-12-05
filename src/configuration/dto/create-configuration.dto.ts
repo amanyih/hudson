@@ -1,24 +1,18 @@
-import { MODE, THEME } from '../../shared/types/types.config';
-import { IsNumber, IsString, Min, IsEnum, IsNotEmpty } from 'class-validator';
+import { MODE, SUBMODE, THEME } from '../../shared/types/types.config';
+import { IsEnum, IsNotEmpty } from 'class-validator';
 
 export class CreateConfigurationDto {
   @IsEnum(THEME)
   @IsNotEmpty()
-  theme: THEME;
+  theme: THEME = THEME.SYSTEM;
 
-  @IsNumber()
-  @Min(0)
-  words: number;
+  @IsEnum(SUBMODE)
+  words: SUBMODE = SUBMODE.TWENTY_FIVE;
 
-  @IsNumber()
-  @Min(0)
-  time: number;
+  @IsEnum(SUBMODE)
+  time: SUBMODE = SUBMODE.FIFTEEN_SECONDS;
 
   @IsEnum(MODE)
   @IsNotEmpty()
-  mode: MODE;
-
-  @IsString()
-  @IsNotEmpty()
-  userId: string;
+  mode: MODE = MODE.TIME;
 }

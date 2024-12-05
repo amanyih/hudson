@@ -12,12 +12,15 @@ import { UserSelect } from './dto/user.response.dto';
 import { ErrorMessages } from '../shared/error-messages';
 import { GoogleProfile } from '../auth/strategy/google.profile.type';
 import { ConfigurationService } from '../configuration/configuration.service';
+import { UserDataService } from '../user-data/user-data.service';
+import { CreateUserDataDto } from '../user-data/dto/create-user-data.dto';
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: PrismaService,
     private configurationService: ConfigurationService,
+    private userDataService: UserDataService,
   ) {}
 
   async create(createUserDto: CreateUserDto): Promise<User> {
@@ -32,10 +35,10 @@ export class UserService {
         email: createUserDto.email,
         passwordHash: createUserDto.password,
       },
-      select: UserSelect,
     });
 
     await this.configurationService.createDefaultConfigForUser(user.id);
+    await this.userDataService.create(new CreateUserDataDto(), user.id);
 
     return user;
   }
@@ -43,7 +46,7 @@ export class UserService {
   async findAll(pagination: PaginationDto): Promise<User[]> {
     const { page, limit } = pagination;
     const take = limit;
-    const skip = (page - 1) * limit;
+    const skip = page * limit;
     return this.prisma.user.findMany({
       take,
       skip,
@@ -119,7 +122,6 @@ export class UserService {
           data: {
             googleId: user.id,
             verified,
-            displayName,
             provider,
           },
         });
@@ -132,13 +134,42 @@ export class UserService {
         email,
         googleId: user.id,
         verified,
-        displayName,
         provider,
       },
       select: UserSelect,
     });
 
+    const userData = new CreateUserDataDto();
+
     await this.configurationService.createDefaultConfigForUser(newUser.id);
+    await this.userDataService.create({ ...userData, displayName }, newUser.id);
     return newUser;
+  }
+
+  async getMe(id: string): Promise<User> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+      select: {
+        ...UserSelect,
+        Config: true,
+        UserData: {
+          select: {
+            xp: true,
+            bio: true,
+            timeSpent: true,
+            avatar: true,
+            displayName: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 }

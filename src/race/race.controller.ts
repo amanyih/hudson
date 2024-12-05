@@ -13,6 +13,8 @@ import { CreateRaceDto } from './dto/create-race.dto';
 import { PaginationDto } from '../shared/types/pagination.dto';
 import { UpdateRaceDto } from './dto/update-race.dto';
 import { RaceResultService } from '../race-result/race-result.service';
+import { GetUser } from '../auth/decorator/get-user.decorator';
+import { User } from '@prisma/client';
 
 @Controller('race')
 export class RaceController {
@@ -22,18 +24,17 @@ export class RaceController {
   ) {}
 
   @Post()
-  create(@Body() payload: CreateRaceDto) {
-    return this.raceService.create(payload);
+  create(@Body() payload: CreateRaceDto, @GetUser() user: User) {
+    return this.raceService.create(payload, user.id);
   }
 
   @Get()
-  findAll(@Query() paginationDto: PaginationDto) {
-    return this.raceService.findAll(paginationDto);
+  findAll(@Query() paginationDto: PaginationDto, @GetUser() user: User) {
+    return this.raceService.findAll(paginationDto, user.id);
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    console.log('id', id);
     return this.raceService.findOne(id);
   }
 

@@ -9,9 +9,15 @@ import { Result } from '@prisma/client';
 export class ResultService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createResultDto: CreateResultDto): Promise<Result> {
+  async create(
+    createResultDto: CreateResultDto,
+    userId: string,
+  ): Promise<Result> {
     const result = await this.prisma.result.create({
-      data: createResultDto,
+      data: {
+        ...createResultDto,
+        userId,
+      },
     });
     return result;
   }

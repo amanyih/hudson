@@ -1,11 +1,11 @@
 import {
   IsNumber,
-  IsString,
   IsBoolean,
   IsArray,
   Min,
   Max,
   IsEnum,
+  IsString,
 } from 'class-validator';
 import { MODE, SUBMODE } from '../../shared/types/types.config';
 
@@ -39,7 +39,7 @@ export class CreateResultDto {
   @IsBoolean()
   numbers: boolean;
 
-  @IsBoolean()
+  @IsString()
   testLanguage: string;
 
   @IsArray()
@@ -53,7 +53,4 @@ export class CreateResultDto {
   @IsNumber()
   @Min(0)
   duration: number;
-
-  @IsString()
-  userId: string;
 }

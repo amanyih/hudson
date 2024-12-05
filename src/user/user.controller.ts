@@ -13,7 +13,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PaginationDto } from '../shared/types/pagination.dto';
 import { GetUser } from '../auth/decorator/get-user.decorator';
-import { Public } from '../auth/decorator/public.decorator';
 import { User } from '@prisma/client';
 
 @Controller('user')
@@ -25,7 +24,6 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Public()
   @Get()
   findAll(@Query() paginationDto: PaginationDto) {
     return this.userService.findAll(paginationDto);
@@ -33,7 +31,7 @@ export class UserController {
 
   @Get('me')
   me(@GetUser() user: User) {
-    return user;
+    return this.userService.getMe(user.id);
   }
 
   @Get(':id')

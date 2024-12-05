@@ -38,8 +38,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       return null;
     }
 
-    console.log('extractJwtFromCookie', req.cookies['access_token']);
-
     return req.cookies['access_token'];
   }
 }

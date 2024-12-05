@@ -12,19 +12,18 @@ model User {
   email        String    @unique
   passwordHash String?
   googleId     String?   @unique
-  displayName  String?
-  avatar       String?
   provider     String?
   verified     Boolean   @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  Result       Result[]
-  UserData     UserData?
-  Config       Config?
   badges       String[] @default([])
   isPremium    Boolean @default(false)
 
+  Result       Result[]
+  UserData     UserData?
+  Config       Config?
   RaceResult RaceResult[]
+  Race Race[]
 }
 
 model Result {
@@ -49,11 +48,13 @@ model Result {
 
 model UserData {
   id             String  @id @default(uuid())
+  displayName  String @default("")
+  avatar       String @default("")
+  xp             Int @default(0)
+  bio            String? @default("")
   personalBest   Float @default(0)
   completedTests Int @default(0)
   timeSpent      Float @default(0)
-  xp             Int @default(0)
-  bio            String? @default("")
   userId         String  @unique
   User User @relation(fields: [userId], references: [id])
 }
@@ -93,8 +94,11 @@ model Race {
   createdAt DateTime @default(now())
   startedAt DateTime?
   isFinished Boolean @default(false)
+  userId String
+
 
   RaceResult RaceResult[]
+  User User @relation(fields: [userId], references: [id])
 }
 
 model RaceResult {
