@@ -1,8 +1,7 @@
 import { BadRequestException, Injectable, Req } from '@nestjs/common';
-import { LoginDto, SignupDto } from './dto';
+import { AuthDto, AuthResponseDto } from './dto';
 import { PrismaService } from '../prisma/prisma.service';
 import * as argon2 from 'argon2';
-import { User } from '@prisma/client';
 import { ErrorMessages } from '../shared/error-messages';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
@@ -21,7 +20,7 @@ export class AuthService {
     private configService: ConfigService,
   ) {}
 
-  async signup(signupDto: SignupDto): Promise<User> {
+  async signup(signupDto: AuthDto): Promise<AuthResponseDto> {
     const user = await this.userService.findByEmail(signupDto.email);
 
     if (user) {
@@ -30,13 +29,18 @@ export class AuthService {
 
     const hash = await argon2.hash(signupDto.password);
 
-    return await this.userService.create({
+    const newUser = await this.userService.create({
       email: signupDto.email,
       password: hash,
     });
+
+    return {
+      message: 'User created successfully',
+      userId: newUser.id,
+    };
   }
 
-  async login(loginDto: LoginDto, res: Response): Promise<JwtToken> {
+  async login(loginDto: AuthDto, res: Response): Promise<AuthResponseDto> {
     const user = await this.prisma.user.findUnique({
       where: {
         email: loginDto.email,
@@ -61,7 +65,10 @@ export class AuthService {
       sameSite: 'none',
     });
 
-    return token;
+    return {
+      message: 'Login successful',
+      userId: user.id,
+    };
   }
 
   async signToken(email: string, id: string): Promise<JwtToken> {
@@ -76,11 +83,22 @@ export class AuthService {
     };
   }
 
-  async googleLogin(@Req() req): Promise<JwtToken> {
+  async googleLogin(@Req() req, res: Response): Promise<AuthResponseDto> {
     const user: GoogleProfile = req.user;
 
     const newUser = await this.userService.createUserFromGoogle(user);
 
-    return this.signToken(newUser.email, newUser.id);
+    const token = await this.signToken(newUser.email, newUser.id);
+
+    res.cookie('access_token', token.access_token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'none',
+    });
+
+    return {
+      message: 'Login successful',
+      userId: newUser.id,
+    };
   }
 }

@@ -10,7 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { LoginDto, SignupDto } from './dto';
+import { AuthDto } from './dto';
 import { GoogleOAuthGuard } from './guard/google.auth.guard';
 import { Response } from 'express';
 import { Public } from './decorator/public.decorator';
@@ -21,14 +21,14 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  async register(@Body() signupDto: SignupDto) {
+  async register(@Body() signupDto: AuthDto) {
     return this.authService.signup(signupDto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
   async login(
-    @Body() loginDto: LoginDto,
+    @Body() loginDto: AuthDto,
     @Res({ passthrough: true }) response: Response,
   ) {
     return await this.authService.login(loginDto, response);
@@ -40,7 +40,7 @@ export class AuthController {
 
   @Get('google-redirect')
   @UseGuards(GoogleOAuthGuard)
-  googleAuthRedirect(@Req() req) {
-    return this.authService.googleLogin(req);
+  googleAuthRedirect(@Req() req, @Res({ passthrough: true }) res: Response) {
+    return this.authService.googleLogin(req, res);
   }
 }
