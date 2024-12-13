@@ -15,7 +15,10 @@ import { UpdateTypingProgress } from './dto/update-typing-progress.dto';
 import { ExtendStartTimeDto } from './dto/extend-start-time.dto';
 import { RaceResultService } from '../race-result/race-result.service';
 import { EndRaceDto } from './dto/end-race.dto';
+import { UseFilters } from '@nestjs/common';
+import { WebScoketExceptionFilter } from '../filters/websocket-exception.filter';
 
+@UseFilters(new WebScoketExceptionFilter())
 @WebSocketGateway({ namespace: 'race', transports: ['websocket'] })
 export class RaceGateway {
   @WebSocketServer()
